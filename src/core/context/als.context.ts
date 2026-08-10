@@ -5,6 +5,9 @@ export interface RequestStore {
     traceId: string;
     userId?: string;
     userRoles?: string[];
+    macAddress?: string;
+    clientIp?: string;
+    deviceModel?: string;
     entityManager?: EntityManager;
 }
 
@@ -29,6 +32,18 @@ export class AlsContext {
 
     static getUserRoles(): string[] | undefined {
         return this.getStore()?.userRoles;
+    }
+
+    static getMacAddress(): string | undefined {
+        return this.getStore()?.macAddress;
+    }
+
+    static getClientIp(): string | undefined {
+        return this.getStore()?.clientIp;
+    }
+
+    static getDeviceModel(): string | undefined {
+        return this.getStore()?.deviceModel;
     }
 
     static setEntityManager(em: EntityManager): void {

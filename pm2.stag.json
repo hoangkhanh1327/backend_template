@@ -1,0 +1,17 @@
+{
+    "apps": [
+        {
+            "name": "backend-template-stag",
+            "script": "./dist/main.js",
+            "instances": 2,
+            "exec_mode": "cluster",
+            "max_memory_restart": "2G",
+            "out_file": "./logs/out.log",
+            "error_file": "./logs/error.log",
+            "time": true,
+            "env_staging": {
+                "NODE_ENV": "staging"
+            }
+        }
+    ]
+}
