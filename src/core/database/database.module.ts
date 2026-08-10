@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ClickhouseModule } from './clickhouse.module';
-import { MongoDatabaseModule } from './mongo.module';
+import { ClickhouseModule } from '@/core/database/clickhouse.module';
+import { MongoDatabaseModule } from '@/core/database/mongo.module';
 
 export const MEMBER_DB_CONNECTION = 'MEMBER_DB';
 export const INTERACTIVE_DB_CONNECTION = 'INTERACTIVE_DB';
