@@ -3,15 +3,11 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, UserPayload } from '@/modules/auth/decorators/current-user.decorator';
 import { Public } from '@/modules/auth/decorators/public.decorator';
+import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RefreshTokenDto } from '@/modules/auth/dto/refresh-token.dto';
 import { AuthService } from '@/modules/auth/services/auth.service';
 import { ClientIp } from '@/shared/decorators/client-ip.decorator';
 import { UserAgent } from '@/shared/decorators/user-agent.decorator';
-
-class LoginDto {
-    username: string;
-    password: string;
-}
 
 @ApiTags('Authentication')
 @Controller('auth')

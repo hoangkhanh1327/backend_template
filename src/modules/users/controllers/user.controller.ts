@@ -1,10 +1,11 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { AuditLog } from '@/modules/audit-logs/decorators/audit-log.decorator';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
 import { UserService } from '@/modules/users/services/user.service';
+import { PaginationQueryDto } from '@/shared/dto/pagination.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -24,12 +25,13 @@ export class UserController {
     @Roles('ADMIN')
     @AuditLog({ module: 'USERS', action: 'GET_USERS', description: 'Xem danh sách người dùng' })
     @ApiOperation({ summary: 'Get all users' })
-    async findAll() {
+    async findAll(@Query() _query?: PaginationQueryDto) {
         return this.userService.findAll();
     }
 
     @Get(':id')
     @ApiOperation({ summary: 'Get user by ID' })
+    @ApiParam({ name: 'id', description: 'User ID (UUID)', example: 'usr-12345' })
     async findOne(@Param('id') id: string) {
         const user = await this.userService.findById(id);
         if (!user) {

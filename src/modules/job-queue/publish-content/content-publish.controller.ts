@@ -4,11 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuditLog } from '@/modules/audit-logs/decorators/audit-log.decorator';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { ContentPublishService } from '@/modules/job-queue/publish-content/content-publish.service';
-
-class PublishContentDto {
-    contentId: string;
-    title: string;
-}
+import { PublishContentDto } from '@/modules/job-queue/publish-content/dto/publish-content.dto';
 
 @ApiTags('Job Queue')
 @ApiBearerAuth()

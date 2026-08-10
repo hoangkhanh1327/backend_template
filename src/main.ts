@@ -1,5 +1,6 @@
 import fastifyMultipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -18,9 +19,35 @@ async function bootstrap() {
     await adapter.register(fastifyMultipart);
 
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
+    const configService = app.get(ConfigService);
 
     const logger = app.get(PinoLoggerService);
     app.useLogger(logger);
+
+    // Basic Auth Protection for Swagger UI
+    const usernameSwagger = configService.get<string>('USERNAME_SWAGGER', 'admin');
+    const passwordSwagger = configService.get<string>('PASSWORD_SWAGGER', 'admin123');
+
+    app.getHttpAdapter()
+        .getInstance()
+        .addHook('onRequest', (req: any, reply: any, done: () => void) => {
+            if (req.url.startsWith('/docs')) {
+                const authHeader = req.headers['authorization'];
+                if (authHeader && authHeader.startsWith('Basic ')) {
+                    const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
+                    const [user, pass] = credentials.split(':');
+
+                    if (user === usernameSwagger && pass === passwordSwagger) {
+                        return done();
+                    }
+                }
+
+                reply.header('WWW-Authenticate', 'Basic realm="Swagger API Documentation"');
+                reply.status(401).send('Unauthorized Swagger Access');
+                return;
+            }
+            done();
+        });
 
     // Set API Prefix
     app.setGlobalPrefix('api/v1');
@@ -46,11 +73,16 @@ async function bootstrap() {
         .setVersion('2.0')
         .addBearerAuth()
         .build();
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('docs', app, document);
 
-    const port = process.env.PORT || 3000;
-    const host = process.env.HOST || '0.0.0.0';
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('docs', app, document, {
+        swaggerOptions: {
+            persistAuthorization: true, // Keep JWT Token logged in after page refresh
+        },
+    });
+
+    const port = configService.get<number>('PORT', 3000);
+    const host = configService.get<string>('HOST', '0.0.0.0');
 
     await app.listen(port, host);
     logger.log(`🚀 Application running on: http://${host}:${port}/api/v1`, 'Bootstrap');
