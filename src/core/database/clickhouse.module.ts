@@ -33,7 +33,10 @@ export const CLICKHOUSE_LOG_REALTIME_CLIENT = 'CLICKHOUSE_LOG_REALTIME_CLIENT';
             provide: CLICKHOUSE_BEHAVIOR_CLIENT,
             inject: [ConfigService],
             useFactory: (configService: ConfigService): ClickHouseClient => {
-                const host = configService.get<string>('DATABASE_CLICKHOUSE_BEHAVIOR_HOST', configService.get<string>('CLICKHOUSE_HOST', '127.0.0.1'));
+                const host = configService.get<string>(
+                    'DATABASE_CLICKHOUSE_BEHAVIOR_HOST',
+                    configService.get<string>('CLICKHOUSE_HOST', '127.0.0.1'),
+                );
                 const port = configService.get<number>('DATABASE_CLICKHOUSE_BEHAVIOR_PORT', 8123);
                 const username = configService.get<string>('DATABASE_CLICKHOUSE_BEHAVIOR_USERNAME', 'user_behavior');
                 const password = configService.get<string>('DATABASE_CLICKHOUSE_BEHAVIOR_PASSWORD', '');
@@ -53,7 +56,10 @@ export const CLICKHOUSE_LOG_REALTIME_CLIENT = 'CLICKHOUSE_LOG_REALTIME_CLIENT';
             provide: CLICKHOUSE_LOG_REALTIME_CLIENT,
             inject: [ConfigService],
             useFactory: (configService: ConfigService): ClickHouseClient => {
-                const host = configService.get<string>('DATABASE_CLICKHOUSE_LOG_REALTIME_HOST', configService.get<string>('CLICKHOUSE_HOST', '127.0.0.1'));
+                const host = configService.get<string>(
+                    'DATABASE_CLICKHOUSE_LOG_REALTIME_HOST',
+                    configService.get<string>('CLICKHOUSE_HOST', '127.0.0.1'),
+                );
                 const port = configService.get<number>('DATABASE_CLICKHOUSE_LOG_REALTIME_PORT', 8123);
                 const username = configService.get<string>('DATABASE_CLICKHOUSE_LOG_REALTIME_USERNAME', 'api_realtime');
                 const password = configService.get<string>('DATABASE_CLICKHOUSE_LOG_REALTIME_PASSWORD', '');

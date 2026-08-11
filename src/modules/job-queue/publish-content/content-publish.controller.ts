@@ -15,7 +15,11 @@ export class ContentPublishController {
     @Post()
     @Roles('ADMIN')
     @HttpCode(HttpStatus.ACCEPTED)
-    @AuditLog({ module: 'JOB_QUEUE', action: 'ENQUEUE_PUBLISH', description: 'Đẩy tác vụ publish nội dung vào hàng đợi ngầm' })
+    @AuditLog({
+        module: 'JOB_QUEUE',
+        action: 'ENQUEUE_PUBLISH',
+        description: 'Đẩy tác vụ publish nội dung vào hàng đợi ngầm',
+    })
     @ApiOperation({ summary: 'Trigger background content publish job' })
     async triggerPublish(@Body() dto: PublishContentDto) {
         const result = await this.publishService.queuePublishTask(dto.contentId, dto.title);

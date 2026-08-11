@@ -22,6 +22,10 @@ export class ContentPublishProcessor extends WorkerHost {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         this.logger.log(`[Job Worker] Content publish completed successfully for Job ID: ${job.id}`, 'ContentPublishProcessor');
-        return { status: 'published', contentId: job.data.contentId, timestamp: new Date().toISOString() };
+        return {
+            status: 'published',
+            contentId: job.data.contentId,
+            timestamp: new Date().toISOString(),
+        };
     }
 }

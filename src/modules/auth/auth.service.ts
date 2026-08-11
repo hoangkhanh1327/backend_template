@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { RefreshTokenDto } from '@/modules/auth/dto/refresh-token.dto';
-import { TokenPair, TokenService } from '@/modules/auth/services/token.service';
+import { TokenPair, TokenService } from '@/modules/auth/token.service';
 
 @Injectable()
 export class AuthService {
