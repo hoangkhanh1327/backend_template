@@ -1,27 +1,39 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { FilterAuditLogDto } from '@/modules/audit-logs/dto/filter-audit-log.dto';
 import { AuditLogEntity } from '@/modules/audit-logs/entities/audit-log.entity';
-import { IAuditLogRepository } from '@/modules/audit-logs/repositories/audit-log.repository.interface';
 import { PaginatedResultDto } from '@/shared/dtos/pagination.dto';
-
-export const AUDIT_LOG_REPOSITORY_TOKEN = 'AUDIT_LOG_REPOSITORY_TOKEN';
 
 @Injectable()
 export class AuditLogService {
     constructor(
-        @Inject(AUDIT_LOG_REPOSITORY_TOKEN)
-        private readonly auditLogRepo: IAuditLogRepository,
+        @InjectRepository(AuditLogEntity)
+        private readonly auditLogRepo: Repository<AuditLogEntity>,
     ) {}
 
     async createLog(payload: Partial<AuditLogEntity>): Promise<AuditLogEntity> {
-        return this.auditLogRepo.save(payload);
+        const log = this.auditLogRepo.create(payload);
+        return this.auditLogRepo.save(log);
     }
 
     async getLogs(query: FilterAuditLogDto): Promise<PaginatedResultDto<AuditLogEntity>> {
-        const [items, totalItems] = await this.auditLogRepo.findWithFilter(query);
         const page = query.page || 1;
         const limit = query.limit || 10;
+        const skip = (page - 1) * limit;
+
+        const where: any = {};
+        if (query.userId) where.userId = query.userId;
+        if (query.action) where.action = Like(`%${query.action}%`);
+        if (query.module) where.module = query.module;
+
+        const [items, totalItems] = await this.auditLogRepo.findAndCount({
+            where,
+            order: { createdAt: 'DESC' },
+            skip,
+            take: limit,
+        });
 
         return {
             items,

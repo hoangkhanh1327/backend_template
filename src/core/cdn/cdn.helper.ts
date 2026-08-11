@@ -6,9 +6,7 @@ export class CdnHelper {
      */
     static generateStreamToken(url: string, secretKey: string, ttlSeconds = 3600): string {
         const expires = Math.floor(Date.now() / 1000) + ttlSeconds;
-        const hash = createHmac('sha256', secretKey)
-            .update(`${url}:${expires}`)
-            .digest('hex');
+        const hash = createHmac('sha256', secretKey).update(`${url}:${expires}`).digest('hex');
 
         return `${url}?token=${hash}&expires=${expires}`;
     }

@@ -1,10 +1,12 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RedisService } from '@/core/redis/redis.service';
-import { IRefreshTokenRepository, REFRESH_TOKEN_REPOSITORY_TOKEN } from '@/modules/auth/interfaces/refresh-token.repository.interface';
+import { RefreshTokenEntity } from '@/modules/auth/entities/refresh-token.entity';
 
 export interface TokenPair {
     accessToken: string;
@@ -24,8 +26,8 @@ export class TokenService {
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
         private readonly redisService: RedisService,
-        @Inject(REFRESH_TOKEN_REPOSITORY_TOKEN)
-        private readonly refreshTokenRepo: IRefreshTokenRepository,
+        @InjectRepository(RefreshTokenEntity)
+        private readonly refreshTokenRepo: Repository<RefreshTokenEntity>,
     ) {}
 
     async generateTokenPair(payload: TokenPayload, clientIp?: string, userAgent?: string): Promise<TokenPair> {
@@ -43,7 +45,12 @@ export class TokenService {
         });
 
         const refreshToken = await this.jwtService.signAsync(
-            { sub: payload.userId, username: payload.username, roles: payload.roles, jti },
+            {
+                sub: payload.userId,
+                username: payload.username,
+                roles: payload.roles,
+                jti,
+            },
             {
                 secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
                 expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d'),
@@ -55,7 +62,7 @@ export class TokenService {
         const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
         // 1. Save Refresh Token to Database `refresh_tokens`
-        await this.refreshTokenRepo.createToken({
+        const tokenEntity = this.refreshTokenRepo.create({
             userId: payload.userId,
             jti,
             token: refreshToken,
@@ -64,6 +71,7 @@ export class TokenService {
             clientIp,
             userAgent,
         });
+        await this.refreshTokenRepo.save(tokenEntity);
 
         // 2. Save Refresh Token to Redis Cache
         await this.redisService.set(`jwt:refresh:${payload.userId}:${jti}`, refreshToken, ttlSeconds);
@@ -94,7 +102,7 @@ export class TokenService {
         }
 
         // Check token status in DB
-        const tokenEntity = await this.refreshTokenRepo.findByJti(jti);
+        const tokenEntity = await this.refreshTokenRepo.findOne({ where: { jti } });
         if (!tokenEntity || tokenEntity.isRevoked || tokenEntity.expiresAt < new Date()) {
             throw new UnauthorizedException('Refresh token is invalid or has been revoked');
         }
@@ -108,7 +116,7 @@ export class TokenService {
 
     async revokeToken(jti: string, userId?: string): Promise<void> {
         // 1. Revoke in DB
-        await this.refreshTokenRepo.revokeByJti(jti);
+        await this.refreshTokenRepo.update({ jti }, { isRevoked: true });
 
         // 2. Add to Redis Blacklist (1 day = 86400s)
         await this.redisService.set(`jwt:blacklist:${jti}`, 'revoked', 86400);
@@ -119,7 +127,7 @@ export class TokenService {
     }
 
     async revokeAllUserTokens(userId: string): Promise<void> {
-        await this.refreshTokenRepo.revokeAllUserTokens(userId);
+        await this.refreshTokenRepo.update({ userId }, { isRevoked: true });
         await this.redisService.set(`jwt:user_blacklist:${userId}`, 'revoked_all', 86400);
     }
 }

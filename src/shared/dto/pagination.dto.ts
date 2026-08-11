@@ -8,14 +8,20 @@ export enum SortOrder {
 }
 
 export class PaginationQueryDto {
-    @ApiPropertyOptional({ description: 'Số trang hiện tại (bắt đầu từ 1)', default: 1 })
+    @ApiPropertyOptional({
+        description: 'Số trang hiện tại (bắt đầu từ 1)',
+        default: 1,
+    })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
     @Min(1)
     page?: number = 1;
 
-    @ApiPropertyOptional({ description: 'Số lượng bản ghi trên một trang (1 - 100)', default: 10 })
+    @ApiPropertyOptional({
+        description: 'Số lượng bản ghi trên một trang (1 - 100)',
+        default: 10,
+    })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
@@ -28,12 +34,18 @@ export class PaginationQueryDto {
     @IsString()
     search?: string;
 
-    @ApiPropertyOptional({ description: 'Trường dùng để sắp xếp (ví dụ: createdAt, name)' })
+    @ApiPropertyOptional({
+        description: 'Trường dùng để sắp xếp (ví dụ: createdAt, name)',
+    })
     @IsOptional()
     @IsString()
     sortBy?: string;
 
-    @ApiPropertyOptional({ enum: SortOrder, description: 'Thứ tự sắp xếp (ASC hoặc DESC)', default: SortOrder.DESC })
+    @ApiPropertyOptional({
+        enum: SortOrder,
+        description: 'Thứ tự sắp xếp (ASC hoặc DESC)',
+        default: SortOrder.DESC,
+    })
     @IsOptional()
     @IsEnum(SortOrder)
     sortOrder?: SortOrder = SortOrder.DESC;

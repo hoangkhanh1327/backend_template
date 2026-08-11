@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { PinoLoggerService } from '@/core/logger/logger.service';
+import { AuditLogService } from '@/modules/audit-logs/audit-log.service';
 import { AuditLogEntity } from '@/modules/audit-logs/entities/audit-log.entity';
-import { AuditLogService } from '@/modules/audit-logs/services/audit-log.service';
 
 @Injectable()
 export class AuditLogListener {

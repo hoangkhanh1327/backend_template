@@ -4,8 +4,8 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { AuditLog } from '@/modules/audit-logs/decorators/audit-log.decorator';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
-import { UserService } from '@/modules/users/services/user.service';
-import { PaginationQueryDto } from '@/shared/dto/pagination.dto';
+import { UserService } from '@/modules/users/user.service';
+import { PaginationQueryDto } from '@/shared/dtos/pagination.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -15,7 +15,11 @@ export class UserController {
 
     @Post()
     @Roles('ADMIN')
-    @AuditLog({ module: 'USERS', action: 'CREATE_USER', description: 'Tạo người dùng mới trong hệ thống' })
+    @AuditLog({
+        module: 'USERS',
+        action: 'CREATE_USER',
+        description: 'Tạo người dùng mới trong hệ thống',
+    })
     @ApiOperation({ summary: 'Create new user (ADMIN only)' })
     async create(@Body() dto: CreateUserDto) {
         return this.userService.createUser(dto);
@@ -23,7 +27,11 @@ export class UserController {
 
     @Get()
     @Roles('ADMIN')
-    @AuditLog({ module: 'USERS', action: 'GET_USERS', description: 'Xem danh sách người dùng' })
+    @AuditLog({
+        module: 'USERS',
+        action: 'GET_USERS',
+        description: 'Xem danh sách người dùng',
+    })
     @ApiOperation({ summary: 'Get all users' })
     async findAll(@Query() _query?: PaginationQueryDto) {
         return this.userService.findAll();
