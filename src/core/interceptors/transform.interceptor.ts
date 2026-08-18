@@ -3,15 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AlsContext } from '@/core/context/als.context';
-
-export interface ApiResponse<T> {
-    success: boolean;
-    statusCode: number;
-    message: string;
-    data: T;
-    timestamp: string;
-    traceId: string;
-}
+import { ApiResponse } from '@/shared/dtos/api-response.dto';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {

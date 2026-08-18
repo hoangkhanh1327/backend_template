@@ -4,12 +4,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { JwtAccessStrategy, JwtAuthGuard, RolesGuard } from '@/core/guards';
 import { AuthController } from '@/modules/auth/auth.controller';
 import { AuthService } from '@/modules/auth/auth.service';
 import { RefreshTokenEntity } from '@/modules/auth/entities/refresh-token.entity';
-import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
-import { RolesGuard } from '@/modules/auth/guards/roles.guard';
-import { JwtAccessStrategy } from '@/modules/auth/strategies/jwt-access.strategy';
 import { TokenService } from '@/modules/auth/token.service';
 
 @Module({

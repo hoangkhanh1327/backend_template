@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '@/core/guards';
 import { AuditLog } from '@/modules/audit-logs/decorators/audit-log.decorator';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { ContentPublishService } from '@/modules/job-queue/publish-content/content-publish.service';
 import { PublishContentDto } from '@/modules/job-queue/publish-content/dto/publish-content.dto';
 

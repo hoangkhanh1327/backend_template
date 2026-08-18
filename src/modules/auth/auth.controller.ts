@@ -1,12 +1,12 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { Public } from '@/core/guards';
 import { AuthService } from '@/modules/auth/auth.service';
-import { CurrentUser, UserPayload } from '@/modules/auth/decorators/current-user.decorator';
-import { Public } from '@/modules/auth/decorators/public.decorator';
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RefreshTokenDto } from '@/modules/auth/dto/refresh-token.dto';
 import { ClientIp } from '@/shared/decorators/client-ip.decorator';
+import { CurrentUser, UserPayload } from '@/shared/decorators/current-user.decorator';
 import { UserAgent } from '@/shared/decorators/user-agent.decorator';
 
 @ApiTags('Authentication')

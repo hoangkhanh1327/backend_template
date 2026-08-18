@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { RedisService } from '@/core/redis/redis.service';
-import { UserPayload } from '@/modules/auth/decorators/current-user.decorator';
+import { UserPayload } from '@/shared/decorators/current-user.decorator';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt') {

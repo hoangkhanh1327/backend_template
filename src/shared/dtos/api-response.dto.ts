@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BaseResponseDto<T> {
+export interface ApiResponse<T> {
+    success: boolean;
+    statusCode: number;
+    message: string;
+    timestamp: string;
+    traceId: string;
+    data?: T;
+}
+
+export class BaseResponseDto<T> implements ApiResponse<T> {
     @ApiProperty({ example: true })
     success: boolean;
 

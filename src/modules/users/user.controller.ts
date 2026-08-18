@@ -1,8 +1,8 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '@/core/guards';
 import { AuditLog } from '@/modules/audit-logs/decorators/audit-log.decorator';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
 import { UserService } from '@/modules/users/user.service';
 import { PaginationQueryDto } from '@/shared/dtos/pagination.dto';
